@@ -188,7 +188,7 @@ coplanar :: [Vector3d] -> Bool
 coplanar vs | length vs <= 3        = True -- by definition
             | collinear $ take 3 vs = coplanar $ tail vs
             | otherwise =
-                all (\v -> (v3 #- v1) #. ((v2 #- v1) #* (v #- v3)) == 0) vs'
+                all (\v -> abs ((v3 #- v1) #. ((v2 #- v1) #* (v #- v3))) <= 0.0001) vs'
                 where (v1:v2:v3:vs') = vs
 
 
