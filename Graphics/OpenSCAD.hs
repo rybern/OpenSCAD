@@ -357,8 +357,6 @@ polyhedron convexity paths
   | length vectors /= length (nub vectors) =
     error "Some faces have different orientation."
   | 2 * length edges /= length vectors = error "Some edges are not in two faces."
-  | xCross headMax xMax tailMax > 0 =
-    error "Face orientations are counterclockwise."
   | otherwise = Solid . Polyhedron convexity points $ sides sidesIn
   where vectors = concatMap (\p -> zip p (tail p ++ [head p])) paths
         edges = nub $ map (Set.fromList . \(a, b) -> [a, b]) vectors
@@ -373,7 +371,8 @@ polyhedron convexity paths
                                   then head maxFirst
                                   else head (tail maxLast))
         xCross a b c  = (\(a, b, c) -> a) $ (a #- b) #* (b #- c)
-        sidesIn = map (concatMap (`elemIndices` points)) paths
+        facesCounterclockwise = xCross headMax xMax tailMax > 0
+        sidesIn = map ((if facesCounterclockwise then reverse else id) . concatMap (`elemIndices` points)) paths
         sides ss | any ((> 3) . length) ss  = Faces ss
                  | all ((== 3) . length) ss = Triangles ss
                  | otherwise = error "Some faces have fewer than 3 points."
