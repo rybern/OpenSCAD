@@ -619,13 +619,13 @@ diam :: Double -> Double
 diam = (/ 2)
 
 -- Now, let Haskell work it's magic
+instance Vector v => Semigroup (Model v) where
+  (Solid (Box 0 0 0)) <> b                   = b
+  a                   <> (Solid (Box 0 0 0)) = a
+  a                   <> b                   = union [a, b]
+
 instance Vector v => Monoid (Model v) where
   mempty = Solid $ Box 0 0 0
-  mappend (Solid (Box 0 0 0)) b = b
-  mappend a (Solid (Box 0 0 0)) = a
-  mappend a b = union [a, b]
-  mconcat [a] = a
-  mconcat as = union as
 
 
 -- | You can use '(#)' to write transformations in a more readable postfix form,
